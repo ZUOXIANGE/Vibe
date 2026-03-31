@@ -1,0 +1,13 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: shortlinker
+      POSTGRES_PASSWORD: password123
+      POSTGRES_DB: shortlinker_db
+    ports:
+      - "5432:5432"
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"

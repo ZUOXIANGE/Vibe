@@ -1,0 +1,6 @@
+@ShortLinker.Api_HostAddress = http://localhost:5131
+
+GET {{ShortLinker.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
