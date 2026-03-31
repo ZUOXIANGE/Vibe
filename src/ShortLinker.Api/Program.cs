@@ -1,11 +1,42 @@
 using Microsoft.EntityFrameworkCore;
 using ZiggyCreatures.Caching.Fusion;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
+using OpenTelemetry.Metrics;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
+
+var otlpEndpoint = builder.Configuration["OpenObserve:Endpoint"] ?? "http://localhost:5080/api/default/v1/traces";
+var otlpHeaders = builder.Configuration["OpenObserve:Headers"] ?? "";
+
+builder.Services.AddOpenTelemetry()
+    .ConfigureResource(r => r.AddService("ShortLinker.Api"))
+    .WithTracing(tracing =>
+    {
+        tracing.AddAspNetCoreInstrumentation()
+               .AddHttpClientInstrumentation()
+               .AddEntityFrameworkCoreInstrumentation()
+               .AddRedisInstrumentation()
+               .AddOtlpExporter(opt => {
+                   opt.Endpoint = new Uri(otlpEndpoint);
+                   if (!string.IsNullOrEmpty(otlpHeaders)) opt.Headers = otlpHeaders;
+               });
+    })
+    .WithMetrics(metrics =>
+    {
+        metrics.AddAspNetCoreInstrumentation()
+               .AddHttpClientInstrumentation()
+               .AddOtlpExporter(opt => {
+                   var metricsEndpoint = otlpEndpoint.Replace("/traces", "/metrics");
+                   opt.Endpoint = new Uri(metricsEndpoint);
+                   if (!string.IsNullOrEmpty(otlpHeaders)) opt.Headers = otlpHeaders;
+               });
+    });
+
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
@@ -18,7 +49,7 @@ builder.Services.AddScoped<ShortLinker.Api.Services.IShortcodeGenerator, ShortLi
 
 builder.Services.AddStackExchangeRedisCache(options =>
 {
-    options.Configuration = "localhost:6379";
+    options.Configuration = builder.Configuration["Redis:Configuration"] ?? "localhost:6379";
 });
 
 builder.Services.AddFusionCache()
@@ -29,7 +60,9 @@ builder.Services.AddFusionCache()
     })
     .WithSerializer(new ZiggyCreatures.Caching.Fusion.Serialization.SystemTextJson.FusionCacheSystemTextJsonSerializer())
     .WithRegisteredDistributedCache()
-    .WithBackplane(new ZiggyCreatures.Caching.Fusion.Backplane.StackExchangeRedis.RedisBackplane(new ZiggyCreatures.Caching.Fusion.Backplane.StackExchangeRedis.RedisBackplaneOptions { Configuration = "localhost:6379" }));
+    .WithBackplane(new ZiggyCreatures.Caching.Fusion.Backplane.StackExchangeRedis.RedisBackplane(new ZiggyCreatures.Caching.Fusion.Backplane.StackExchangeRedis.RedisBackplaneOptions { 
+        Configuration = builder.Configuration["Redis:Configuration"] ?? "localhost:6379" 
+    }));
 
 var app = builder.Build();
 
@@ -48,3 +81,5 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+public partial class Program { }
