@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using ZiggyCreatures.Caching.Fusion;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,7 +28,7 @@ builder.Services.AddFusionCache()
         IsFailSafeEnabled = true
     })
     .WithSerializer(new ZiggyCreatures.Caching.Fusion.Serialization.SystemTextJson.FusionCacheSystemTextJsonSerializer())
-    .WithDistributedCache(new Microsoft.Extensions.DependencyInjection.FusionCacheExtMethods.DistributedCacheConfigurator())
+    .WithRegisteredDistributedCache()
     .WithBackplane(new ZiggyCreatures.Caching.Fusion.Backplane.StackExchangeRedis.RedisBackplane(new ZiggyCreatures.Caching.Fusion.Backplane.StackExchangeRedis.RedisBackplaneOptions { Configuration = "localhost:6379" }));
 
 var app = builder.Build();
