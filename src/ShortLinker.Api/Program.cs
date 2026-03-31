@@ -13,6 +13,23 @@ builder.Services.AddDbContext<ShortLinker.Api.Infrastructure.ApplicationDbContex
 
 builder.Services.AddScoped<ShortLinker.Api.Infrastructure.ITenantContext, ShortLinker.Api.Infrastructure.TenantContext>();
 
+builder.Services.AddScoped<ShortLinker.Api.Services.IShortcodeGenerator, ShortLinker.Api.Services.Base62ShortcodeGenerator>();
+
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = "localhost:6379";
+});
+
+builder.Services.AddFusionCache()
+    .WithDefaultEntryOptions(new ZiggyCreatures.Caching.Fusion.FusionCacheEntryOptions {
+        Duration = TimeSpan.FromMinutes(10),
+        FailSafeMaxDuration = TimeSpan.FromHours(2),
+        IsFailSafeEnabled = true
+    })
+    .WithSerializer(new ZiggyCreatures.Caching.Fusion.Serialization.SystemTextJson.FusionCacheSystemTextJsonSerializer())
+    .WithDistributedCache(new Microsoft.Extensions.DependencyInjection.FusionCacheExtMethods.DistributedCacheConfigurator())
+    .WithBackplane(new ZiggyCreatures.Caching.Fusion.Backplane.StackExchangeRedis.RedisBackplane(new ZiggyCreatures.Caching.Fusion.Backplane.StackExchangeRedis.RedisBackplaneOptions { Configuration = "localhost:6379" }));
+
 var app = builder.Build();
 
 app.UseMiddleware<ShortLinker.Api.Middleware.TenantResolutionMiddleware>();
