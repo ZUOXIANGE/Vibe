@@ -387,7 +387,7 @@ git commit -m "feat: 实现基础 Base62 短码生成器并配置 FusionCache �
 - Create: `src/ShortLinker.Api/Controllers/RedirectController.cs`
 - Modify: `src/ShortLinker.Api/Program.cs`
 
-- [ ] **Step 1: 编写 CRUD 管理接口**
+- [x] **Step 1: 编写 CRUD 管理接口**
 ```csharp
 // src/ShortLinker.Api/Controllers/LinksController.cs
 using Microsoft.AspNetCore.Mvc;
@@ -430,7 +430,7 @@ public class LinksController : ControllerBase
 }
 ```
 
-- [ ] **Step 2: 编写重定向接口 (旁路缓存)**
+- [x] **Step 2: 编写重定向接口 (旁路缓存)**
 ```csharp
 // src/ShortLinker.Api/Controllers/RedirectController.cs
 using Microsoft.AspNetCore.Mvc;
@@ -478,7 +478,7 @@ public class RedirectController : ControllerBase
 }
 ```
 
-- [ ] **Step 3: 配置 OpenAPI/Swagger**
+- [x] **Step 3: 配置 OpenAPI/Swagger**
 ```csharp
 // Modify: src/ShortLinker.Api/Program.cs
 // ASP.NET Core 10 includes OpenAPI by default, ensure it is enabled:
@@ -490,7 +490,7 @@ if (app.Environment.IsDevelopment())
 }
 ```
 
-- [ ] **Step 4: 编译并 Commit**
+- [x] **Step 4: 编译并 Commit**
 ```bash
 dotnet build
 git add .
