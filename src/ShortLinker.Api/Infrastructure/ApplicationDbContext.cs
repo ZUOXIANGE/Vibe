@@ -14,6 +14,7 @@ public class ApplicationDbContext : DbContext
     }
 
     public DbSet<ShortLink> ShortLinks => Set<ShortLink>();
+    public DbSet<LinkAccessLog> AccessLogs => Set<LinkAccessLog>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -25,6 +26,10 @@ public class ApplicationDbContext : DbContext
 
         // Global Query Filter for Tenant Isolation
         modelBuilder.Entity<ShortLink>().HasQueryFilter(s => EF.Property<string>(s, "TenantId") == _tenantContext.TenantId);
+
+        modelBuilder.Entity<LinkAccessLog>().HasQueryFilter(s => EF.Property<string>(s, "TenantId") == _tenantContext.TenantId);
+        modelBuilder.Entity<LinkAccessLog>().HasIndex(l => l.TenantId);
+        modelBuilder.Entity<LinkAccessLog>().HasIndex(l => l.AccessedAt);
     }
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
