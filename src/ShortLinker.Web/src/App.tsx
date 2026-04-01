@@ -1,10 +1,19 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { CreateLinkForm } from './components/CreateLinkForm';
 import { LinkList } from './components/LinkList';
+import { Dashboard } from './pages/Dashboard';
 
 const queryClient = new QueryClient({
     defaultOptions: { queries: { refetchOnWindowFocus: false, retry: 1 } }
 });
+
+const TenantDashboard = () => (
+    <>
+        <Dashboard />
+        <CreateLinkForm />
+        <LinkList />
+    </>
+);
 
 function App() {
     return (
@@ -19,8 +28,7 @@ function App() {
                     </div>
                 </header>
                 <main className="p-6 max-w-7xl mx-auto">
-                    <CreateLinkForm />
-                    <LinkList />
+                    <TenantDashboard />
                 </main>
             </div>
         </QueryClientProvider>
