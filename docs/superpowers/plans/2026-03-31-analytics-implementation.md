@@ -198,7 +198,7 @@ git commit -m "feat(analytics): implement async background service for access lo
 **Files:**
 - Create: `src/ShortLinker.Api/Controllers/StatsController.cs`
 
-- [ ] **Step 1: 创建 StatsController**
+- [x] **Step 1: 创建 StatsController**
 ```csharp
 // src/ShortLinker.Api/Controllers/StatsController.cs
 using Microsoft.AspNetCore.Mvc;
@@ -263,7 +263,7 @@ public class StatsController : ControllerBase
 }
 ```
 
-- [ ] **Step 2: 验证并 Commit**
+- [x] **Step 2: 验证并 Commit**
 ```bash
 dotnet build
 git add .
@@ -277,13 +277,13 @@ git commit -m "feat(analytics): add stats endpoints for summary, trends and devi
 - Create: `src/ShortLinker.Web/src/pages/Dashboard.tsx`
 - Modify: `src/ShortLinker.Web/src/App.tsx`
 
-- [ ] **Step 1: 安装 Recharts**
+- [x] **Step 1: 安装 Recharts**
 ```bash
 cd src/ShortLinker.Web
 npm install recharts
 ```
 
-- [ ] **Step 2: 编写 React Query Hooks**
+- [x] **Step 2: 编写 React Query Hooks**
 ```typescript
 // src/ShortLinker.Web/src/hooks/useStats.ts
 import { useQuery } from '@tanstack/react-query';
@@ -311,7 +311,7 @@ export const useStatsDevices = () => {
 };
 ```
 
-- [ ] **Step 3: 创建 Dashboard 视图**
+- [x] **Step 3: 创建 Dashboard 视图**
 ```tsx
 // src/ShortLinker.Web/src/pages/Dashboard.tsx
 import { useStatsSummary, useStatsTrend, useStatsDevices } from '../hooks/useStats';
@@ -374,7 +374,7 @@ export const Dashboard = () => {
 };
 ```
 
-- [ ] **Step 4: 将 Dashboard 集成到前台 Layout**
+- [x] **Step 4: 将 Dashboard 集成到前台 Layout**
 ```tsx
 // Modify: src/ShortLinker.Web/src/App.tsx
 // Add <Dashboard /> above <CreateLinkForm /> in TenantDashboard:
@@ -390,7 +390,7 @@ const TenantDashboard = () => (
 );
 ```
 
-- [ ] **Step 5: 验证并 Commit**
+- [x] **Step 5: 验证并 Commit**
 ```bash
 cd src/ShortLinker.Web
 npm run build
