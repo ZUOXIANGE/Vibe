@@ -21,7 +21,7 @@ public class RedirectController : ControllerBase
     }
 
     [HttpGet("{shortCode}")]
-    public async Task<IActionResult> RedirectToOriginal(string shortCode)
+    public async Task<IActionResult> RedirectToOriginal(string shortCode, [FromServices] ShortLinker.Api.Services.AccessLogChannel logChannel)
     {
         var tenantId = _tenantContext.TenantId;
         if (string.IsNullOrEmpty(tenantId)) return NotFound();
@@ -35,8 +35,16 @@ public class RedirectController : ControllerBase
 
         if (string.IsNullOrEmpty(originalUrl)) return NotFound();
 
-        // 异步记录日志的占位
-        _ = Task.Run(() => Console.WriteLine($"Clicked {shortCode} at {DateTime.UtcNow}"));
+        // 异步记录日志
+        var log = new ShortLinker.Api.Models.LinkAccessLog
+        {
+            TenantId = tenantId,
+            ShortCode = shortCode,
+            IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString(),
+            UserAgent = Request.Headers.UserAgent.ToString(),
+            Referer = Request.Headers.Referer.ToString()
+        };
+        _ = logChannel.AddLogAsync(log);
 
         return RedirectPermanent(originalUrl); // 301 重定向
     }

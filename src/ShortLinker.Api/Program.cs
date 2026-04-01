@@ -64,6 +64,9 @@ builder.Services.AddFusionCache()
         Configuration = builder.Configuration["Redis:Configuration"] ?? "localhost:6379" 
     }));
 
+builder.Services.AddSingleton<ShortLinker.Api.Services.AccessLogChannel>();
+builder.Services.AddHostedService<ShortLinker.Api.Services.AccessLogWriterService>();
+
 var app = builder.Build();
 
 app.UseMiddleware<ShortLinker.Api.Middleware.TenantResolutionMiddleware>();
